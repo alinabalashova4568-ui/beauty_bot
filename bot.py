@@ -117,7 +117,7 @@ async def process_time(message: types.Message, state: FSMContext):
         f"⏰ Время: {data['time']}\n"
         f"💬 От: @{message.from_user.username or message.from_user.id}"
     )
-    await bot.send_message(ADMIN_ID, text_to_admin, parse_mode="Markdown")
+    await bot.send_message(ADMIN_ID, text_to_admin)
 
     await message.answer(
         f"Спасибо, {data['name']}! Вы записаны на {data['date']} в {data['time']}.\n"

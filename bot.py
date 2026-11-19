@@ -108,7 +108,7 @@ async def process_time(message: types.Message, state: FSMContext):
     await state.update_data(time=message.text)
     data = await state.get_data()
 
-    # Отправляем заявку админу
+       # Отправляем заявку админу
     text_to_admin = (
         f"🔥 *Новая запись!*\n"
         f"👤 Имя: {data['name']}\n"
@@ -117,7 +117,17 @@ async def process_time(message: types.Message, state: FSMContext):
         f"⏰ Время: {data['time']}\n"
         f"💬 От: @{message.from_user.username or message.from_user.id}"
     )
-    await bot.send_message(ADMIN_ID, text_to_admin)
+    
+    # Пытаемся отправить, но если ошибка - пишем пользователю
+    try:
+        await bot.send_message(ADMIN_ID, text_to_admin)
+    except Exception as e:
+        await message.answer(f"Ошибка отправки админу: {e}")
+        print(f"ОШИБКА: {e}")
+        # Если админ не получил, хотя бы пользователю скажем
+        await message.answer("Ваша заявка сохранена, но у админа технические неполадки. Мы свяжемся с вами.")
+        await state.clear()
+        return
 
     await message.answer(
         f"Спасибо, {data['name']}! Вы записаны на {data['date']} в {data['time']}.\n"
